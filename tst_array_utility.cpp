@@ -36,6 +36,7 @@ public:
     void negative_integers_test() const;
     void requirements_example_test() const;
     void array_of_array_complex_test() const;
+    void array_with_nullptr_test() const;
 };
 
 
@@ -158,11 +159,24 @@ void UtilityTest::requirements_example_test() const
 void UtilityTest::array_of_array_complex_test() const
 {
     auto array = array_from_string("[-1233,34,[1,2,[3]],434,[],[232,-4,[[[-122],-233,[]]]]]");
-    std::vector<int> expected =    {-1233,34, 1,2, 3,  434,    232,-4,   -122, -233 };
+    std::vector<int> expected =    { -1233,34, 1,2, 3,  434,    232,-4,   -122, -233 };
     COMPARE(ic::array_utility::flatten_array(*array), expected);
 
     array = array_from_string("[1,[1,2,[1,2,3,[1,2,3,4,[1,2,3,4,5,[1,2,3,4,5,6,[1,2,3,4,5,6,7,[1,2,3,4,5,6,7,8,[1,2,3,4,5,6,7,8,9]]]]]]]]]");
     expected = { 1,1,2,1,2,3,1,2,3,4,1,2,3,4,5,1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8,9 };
+}
+
+void UtilityTest::array_with_nullptr_test() const
+{
+    ic::Array array;
+    array.emplace_back(nullptr);
+    COMPARE(ic::array_utility::flatten_array(array), std::vector<int>{});
+
+    array.emplace_back(std::make_unique<ic::Integer>(42));
+    array.emplace_back(std::make_unique<ic::Integer>(-23));
+    array.emplace_back(nullptr);
+    std::vector<int> expected = {42, -23};
+    COMPARE(ic::array_utility::flatten_array(array), expected);
 }
 
 int main(int argc, char *argv[])
@@ -176,6 +190,7 @@ int main(int argc, char *argv[])
     utility_test.negative_integers_test();
     utility_test.requirements_example_test();
     utility_test.array_of_array_complex_test();
+    utility_test.array_with_nullptr_test();
 
     return 0;
 }
