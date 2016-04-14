@@ -13,7 +13,7 @@ $(EXECUTABLE): $(OBJECTS)
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
-run: $(EXECUTABLE)
+tests: $(EXECUTABLE)
 	./$(EXECUTABLE)
 
 clean:
